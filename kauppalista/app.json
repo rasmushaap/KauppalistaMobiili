@@ -1,5 +1,13 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Kauppalista to use Face ID."
+        }
+      ]
+    ],
     "name": "kauppalista",
     "slug": "kauppalista",
     "version": "1.0.0",
@@ -12,7 +20,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Salli Kauppalistan käyttää Face ID:tä turvalliseen kirjautumiseen."
+      }
     },
     "android": {
       "adaptiveIcon": {

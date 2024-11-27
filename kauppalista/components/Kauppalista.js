@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Checkbox from "expo-checkbox";
+import { useState, useEffect } from "react";
+import * as Speech from "expo-speech";
 import {
   Text,
   View,
@@ -13,6 +13,10 @@ import {
 export default function Kauppalista() {
   const [tavara, setTavara] = useState({ nimi: "", kpl: "" });
   const [lista, setLista] = useState([]);
+
+  const puhu = (tavara) => {
+    Speech.speak(`Tuote: ${tavara.nimi}, Määrä: ${tavara.kpl}`);
+  };
 
   const addTavara = () => {
     if (tavara.nimi != "" && tavara.kpl !== "") {
@@ -58,6 +62,12 @@ export default function Kauppalista() {
             >
               <Text style={styles.deleteButtonText}>Poista</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => puhu(item)}
+              style={styles.speakButton}
+            >
+              <Text style={styles.speakButtonText}>Puhu</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -101,6 +111,16 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  speakButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 5,
+    padding: 5,
+    marginTop: 10,
+  },
+  speakButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },
