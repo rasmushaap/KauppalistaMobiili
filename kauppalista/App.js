@@ -5,7 +5,8 @@ import Kauppalista from "./components/Kauppalista";
 import Todo from "./components/Todo";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState, useEffect } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, StatusBar, StyleSheet, View } from "react-native";
+import { PaperProvider } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,33 +24,39 @@ export default function App() {
 
   if (authentication)
     return (
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: () => {
-              if (route.name === "Kauppalista") {
-                return (
-                  <FontAwesome5
-                    name="shopping-basket"
-                    size={24}
-                    color="black"
-                  />
-                );
-              } else if (route.name === "Todo") {
-                return <FontAwesome5 name="list" size={24} color="black" />;
-              }
-            },
-          })}
-        >
-          <Tab.Screen name="Kauppalista" component={Kauppalista} />
-          <Tab.Screen name="Todo" component={Todo} />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <PaperProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: () => {
+                if (route.name === "Kauppalista") {
+                  return (
+                    <FontAwesome5
+                      name="shopping-basket"
+                      size={24}
+                      color="black"
+                    />
+                  );
+                } else if (route.name === "Todo") {
+                  return <FontAwesome5 name="list" size={24} color="black" />;
+                }
+              },
+            })}
+          >
+            <Tab.Screen name="Kauppalista" component={Kauppalista} />
+            <Tab.Screen name="Todo" component={Todo} />
+          </Tab.Navigator>
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </PaperProvider>
     );
   return (
-    <View style={styles.container}>
-      <Button title="Kirjaudu sisään" onPress={authenticateUser} />
-    </View>
+    <PaperProvider>
+      <View style={styles.container}>
+        <Button title="Kirjaudu sisään" onPress={authenticateUser} />
+      </View>
+      <StatusBar style="auto" />
+    </PaperProvider>
   );
 }
 

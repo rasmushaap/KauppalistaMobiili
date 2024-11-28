@@ -1,14 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import * as Speech from "expo-speech";
-import {
-  Text,
-  View,
-  TextInput,
-  Button,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { Button, TextInput, Card, Text, IconButton } from "react-native-paper";
+import { View, StyleSheet, FlatList } from "react-native";
 
 export default function Kauppalista() {
   const [tavara, setTavara] = useState({ nimi: "", kpl: "" });
@@ -18,9 +11,21 @@ export default function Kauppalista() {
     Speech.speak(`Tuote: ${tavara.nimi}, Määrä: ${tavara.kpl}`);
   };
 
+  const toggleCheck = (id) => {
+    setLista(
+      lista.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
+  };
+
   const addTavara = () => {
     if (tavara.nimi != "" && tavara.kpl !== "") {
-      const tavaraWithID = { id: Date.now().toString(), ...tavara };
+      const tavaraWithID = {
+        id: Date.now().toString(),
+        ...tavara,
+        checked: false,
+      };
       setLista([tavaraWithID, ...lista]);
       setTavara({ nimi: "", kpl: "" });
     }
@@ -35,40 +40,49 @@ export default function Kauppalista() {
       <Text style={styles.header}>Kauppalista</Text>
       <View style={{ alignItems: "center" }}>
         <TextInput
-          style={styles.input}
+          style={{ width: "90%", marginBottom: 10 }}
           placeholder="Syötä tavara"
           onChangeText={(text) => setTavara({ ...tavara, nimi: text })}
           value={tavara.nimi}
         />
         <TextInput
-          style={styles.input}
+          style={{ width: "90%", marginBottom: 10 }}
           placeholder="Syötä määrä"
           keyboardType="numeric"
           onChangeText={(text) => setTavara({ ...tavara, kpl: text })}
           value={tavara.kpl}
         />
-        <Button title="Lisää" onPress={addTavara} />
+        <Button mode="contained" onPress={addTavara}>
+          Lisää
+        </Button>
       </View>
       <FlatList
         data={lista}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.listaItem}>
-            <Text style={styles.tavaraText}>Tuote: {item.nimi}</Text>
-            <Text style={styles.tavaraText}>Määrä: {item.kpl}</Text>
-            <TouchableOpacity
-              onPress={() => removeTavara(item.id)}
-              style={styles.deleteButton}
-            >
-              <Text style={styles.deleteButtonText}>Poista</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => puhu(item)}
-              style={styles.speakButton}
-            >
-              <Text style={styles.speakButtonText}>Puhu</Text>
-            </TouchableOpacity>
-          </View>
+          <Card style={{ marginBottom: 10, alignItems: "center" }}>
+            <Card.Content>
+              <View style={styles.listaItem}>
+                <Text
+                  style={[
+                    styles.tavaraText,
+                    item.checked && styles.checkedTavaraText,
+                  ]}
+                >
+                  {item.nimi} ({item.kpl} kpl)
+                </Text>
+              </View>
+              <View style={styles.buttonRow}>
+                <IconButton icon="check" onPress={() => toggleCheck(item.id)} />
+                <IconButton icon="volume-high" onPress={() => puhu(item)} />
+                <IconButton
+                  iconColor="red"
+                  icon="delete"
+                  onPress={() => removeTavara(item.id)}
+                />
+              </View>
+            </Card.Content>
+          </Card>
         )}
       />
     </View>
@@ -96,32 +110,27 @@ const styles = StyleSheet.create({
   },
   listaItem: {
     alignItems: "center",
-    padding: 15,
-    marginVertical: 5,
-    backgroundColor: "#e8e8e8",
-    borderRadius: 5,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   tavaraText: {
     fontSize: 16,
     color: "black",
   },
-  deleteButton: {
-    backgroundColor: "#ff5c5c",
-    borderRadius: 5,
-    padding: 5,
+  checkedTavaraText: {
+    textDecorationLine: "line-through",
+    color: "gray",
   },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  speakButton: {
-    backgroundColor: "#4CAF50",
-    borderRadius: 5,
-    padding: 5,
+  actionContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
-  speakButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 10,
   },
 });
